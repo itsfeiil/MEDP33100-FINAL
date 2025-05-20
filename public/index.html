@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Archive of Lost Time</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>The Archive of Lost Time</h1>
+    </header>
+
+    <main>
+        <section id="intro">
+            <div class="intro-content">
+                <div class="time-icon">⏳</div>
+                <p>Welcome to the Archive of Lost Time. We all lose time — in traffic, on bad dates, in boring meetings, or inside our own heads. This is where it goes.</p>
+                <div class="quote">"Time you enjoy wasting is not wasted time."</div>
+            </div>
+        </section>
+
+        <section id="submission-form">
+            <h2>Add Your Lost Time</h2>
+            <form id="lostTimeForm">
+                <div>
+                    <label for="description">What did you lose time doing?</label>
+                    <input type="text" id="description" name="description" required>
+                </div>
+                <div>
+                    <label for="duration">How long did it take?</label>
+                    <select id="duration" name="duration">
+                        <option value="5 mins">5 minutes</option>
+                        <option value="15 mins">15 minutes</option>
+                        <option value="30 mins">30 minutes</option>
+                        <option value="1 hour">1 hour</option>
+                        <option value="2-4 hours">2-4 hours</option>
+                        <option value="5-8 hours">5-8 hours</option>
+                        <option value="10+ hours">10+ hours</option>
+                    </select>
+                </div>
+                <div>
+                    <label>What emotion best describes it now?</label>
+                    <div id="emotions">
+                        <button type="button" class="emoji-btn" data-emoji="😡">😡</button>
+                        <button type="button" class="emoji-btn" data-emoji="😅">😅</button>
+                        <button type="button" class="emoji-btn" data-emoji="😢">😢</button>
+                        <button type="button" class="emoji-btn" data-emoji="😴">😴</button>
+                        <button type="button" class="emoji-btn" data-emoji="🤷">🤷</button>
+                        <input type="hidden" id="emotion" name="emotion">
+                    </div>
+                </div>
+                <div>
+                    <label>Would you do it again?</label>
+                    <input type="radio" id="yes" name="wouldDoAgain" value="Yes" checked>
+                    <label for="yes">Yes</label>
+                    <input type="radio" id="no" name="wouldDoAgain" value="No">
+                    <label for="no">No</label>
+                    <input type="radio" id="maybe" name="wouldDoAgain" value="Maybe">
+                    <label for="maybe">Maybe</label>
+                </div>
+                <div>
+                    <label for="tags">Optional tag(s) (comma-separated):</label>
+                    <input type="text" id="tags" name="tags" placeholder="e.g., Waiting, Work, Romance">
+                </div>
+                <button type="submit">Add to the Archive</button>
+            </form>
+        </section>
+
+        <section id="archive-display">
+            <h2>The Collective Lost Time</h2>
+            <div id="filters">
+                <!-- Filters will go here -->
+            </div>
+            <div id="entries-container">
+                <!-- Entries will be displayed here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 The Archive of Lost Time</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Simple error handler to log errors to the page for easier viewing on mobile
+        window.onerror = function(message, source, lineno, colno, error) {
+            const errorDisplay = document.createElement('div');
+            errorDisplay.style.position = 'fixed';
+            errorDisplay.style.bottom = '10px';
+            errorDisplay.style.left = '10px';
+            errorDisplay.style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
+            errorDisplay.style.color = 'white';
+            errorDisplay.style.padding = '10px';
+            errorDisplay.style.zIndex = '1000';
+            errorDisplay.style.maxWidth = '80%';
+            errorDisplay.style.overflowWrap = 'break-word';
+            errorDisplay.textContent = `Error: ${message} (${source}:${lineno}:${colno})`;
+            document.body.appendChild(errorDisplay);
+            
+            console.error(message, source, lineno, colno, error);
+            return false;
+        };
+    </script>
+</body>
+</html> 

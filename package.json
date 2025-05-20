@@ -1,0 +1,20 @@
+{
+  "name": "the-archive-of-lost-time",
+  "version": "1.0.0",
+  "description": "A poetic and humorous place where people anonymously submit moments they feel were wasted, forgotten, or lost.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.0.12"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 
