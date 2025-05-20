@@ -17,54 +17,10 @@
                 <div class="time-icon">⏳</div>
                 <p>Welcome to the Archive of Lost Time. We all lose time — in traffic, on bad dates, in boring meetings, or inside our own heads. This is where it goes.</p>
                 <div class="quote">"Time you enjoy wasting is not wasted time."</div>
+                <div class="navigation-buttons">
+                    <button id="add-time-btn" class="primary-btn">Add Your Lost Time</button>
+                </div>
             </div>
-        </section>
-
-        <section id="submission-form">
-            <h2>Add Your Lost Time</h2>
-            <form id="lostTimeForm">
-                <div>
-                    <label for="description">What did you lose time doing?</label>
-                    <input type="text" id="description" name="description" required>
-                </div>
-                <div>
-                    <label for="duration">How long did it take?</label>
-                    <select id="duration" name="duration">
-                        <option value="5 mins">5 minutes</option>
-                        <option value="15 mins">15 minutes</option>
-                        <option value="30 mins">30 minutes</option>
-                        <option value="1 hour">1 hour</option>
-                        <option value="2-4 hours">2-4 hours</option>
-                        <option value="5-8 hours">5-8 hours</option>
-                        <option value="10+ hours">10+ hours</option>
-                    </select>
-                </div>
-                <div>
-                    <label>What emotion best describes it now?</label>
-                    <div id="emotions">
-                        <button type="button" class="emoji-btn" data-emoji="😡">😡</button>
-                        <button type="button" class="emoji-btn" data-emoji="😅">😅</button>
-                        <button type="button" class="emoji-btn" data-emoji="😢">😢</button>
-                        <button type="button" class="emoji-btn" data-emoji="😴">😴</button>
-                        <button type="button" class="emoji-btn" data-emoji="🤷">🤷</button>
-                        <input type="hidden" id="emotion" name="emotion">
-                    </div>
-                </div>
-                <div>
-                    <label>Would you do it again?</label>
-                    <input type="radio" id="yes" name="wouldDoAgain" value="Yes" checked>
-                    <label for="yes">Yes</label>
-                    <input type="radio" id="no" name="wouldDoAgain" value="No">
-                    <label for="no">No</label>
-                    <input type="radio" id="maybe" name="wouldDoAgain" value="Maybe">
-                    <label for="maybe">Maybe</label>
-                </div>
-                <div>
-                    <label for="tags">Optional tag(s) (comma-separated):</label>
-                    <input type="text" id="tags" name="tags" placeholder="e.g., Waiting, Work, Romance">
-                </div>
-                <button type="submit">Add to the Archive</button>
-            </form>
         </section>
 
         <section id="archive-display">

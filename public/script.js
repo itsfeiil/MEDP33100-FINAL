@@ -1,82 +1,100 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Navigation buttons
+    const addTimeBtn = document.getElementById('add-time-btn');
+    const backBtn = document.getElementById('back-btn');
+    
+    // Setup navigation if buttons exist
+    if (addTimeBtn) {
+        addTimeBtn.addEventListener('click', () => {
+            window.location.href = 'form.html';
+        });
+    }
+    
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    }
+
     const lostTimeForm = document.getElementById('lostTimeForm');
     const entriesContainer = document.getElementById('entries-container');
-    const emotionButtons = document.querySelectorAll('.emoji-btn');
-    const hiddenEmotionInput = document.getElementById('emotion');
-    const submitButton = lostTimeForm.querySelector('button[type="submit"]');
-    let editingEntryId = null; // To store the ID of the entry being edited
+    let emotionButtons, hiddenEmotionInput, submitButton, editingEntryId;
+    
+    // Only setup form if it exists on the page
+    if (lostTimeForm) {
+        emotionButtons = document.querySelectorAll('.emoji-btn');
+        hiddenEmotionInput = document.getElementById('emotion');
+        submitButton = lostTimeForm.querySelector('button[type="submit"]');
+        editingEntryId = null; // To store the ID of the entry being edited
 
-    // Handle emotion button selection
-    emotionButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            emotionButtons.forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-            hiddenEmotionInput.value = button.getAttribute('data-emoji');
+        // Handle emotion button selection
+        emotionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                emotionButtons.forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                hiddenEmotionInput.value = button.getAttribute('data-emoji');
+            });
         });
-    });
 
-    lostTimeForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
+        lostTimeForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-        const formData = new FormData(lostTimeForm);
-        const data = {
-            description: formData.get('description'),
-            duration: formData.get('duration'),
-            emotion: hiddenEmotionInput.value, 
-            wouldDoAgain: formData.get('wouldDoAgain'),
-            tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag)
-        };
+            const formData = new FormData(lostTimeForm);
+            const data = {
+                description: formData.get('description'),
+                duration: formData.get('duration'),
+                emotion: hiddenEmotionInput.value, 
+                wouldDoAgain: formData.get('wouldDoAgain'),
+                tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag)
+            };
 
-        if (!data.emotion) {
-            alert('Please select an emotion.');
-            return;
-        }
-
-        console.log('Submitting:', data);
-
-        try {
-            let response;
-            if (editingEntryId) {
-                // Update existing entry
-                response = await fetch(`/api/entries/${editingEntryId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-            } else {
-                // Create new entry
-                response = await fetch('/api/entries', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
+            if (!data.emotion) {
+                alert('Please select an emotion.');
+                return;
             }
 
-            if (response.ok) {
-                const result = await response.json();
+            console.log('Submitting:', data);
+
+            try {
+                let response;
                 if (editingEntryId) {
-                    // Reload all entries to refresh view
-                    fetchEntries();
+                    // Update existing entry
+                    response = await fetch(`/api/entries/${editingEntryId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
                 } else {
-                    // Reload all entries to refresh view
-                    fetchEntries();
+                    // Create new entry
+                    response = await fetch('/api/entries', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
                 }
-                resetForm();
-            } else {
-                const errorData = await response.json();
-                alert(`Failed to ${editingEntryId ? 'update' : 'submit'} entry: ` + (errorData.message || response.statusText));
+
+                if (response.ok) {
+                    const result = await response.json();
+                    // Navigate back to index after successful submission
+                    window.location.href = 'index.html';
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to ${editingEntryId ? 'update' : 'submit'} entry: ` + (errorData.message || response.statusText));
+                }
+            } catch (error) {
+                console.error(`Error ${editingEntryId ? 'updating' : 'submitting'} entry:`, error);
+                alert('An error occurred. Please try again.');
             }
-        } catch (error) {
-            console.error(`Error ${editingEntryId ? 'updating' : 'submitting'} entry:`, error);
-            alert('An error occurred. Please try again.');
-        }
-    });
+        });
+    }
 
     function resetForm() {
+        if (!lostTimeForm) return;
+        
         lostTimeForm.reset();
         emotionButtons.forEach(btn => btn.classList.remove('selected'));
         hiddenEmotionInput.value = '';
@@ -149,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timestamp.textContent = new Date(entry.createdAt).toLocaleString();
         details.appendChild(timestamp);
         
-        // Create action buttons area - using direct DOM methods instead of innerHTML
+        // Create action buttons area
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'entry-actions';
         dropletContent.appendChild(actionsDiv);
@@ -177,7 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             event.stopPropagation();
             console.log('Edit button clicked for entry:', entry._id);
-            handleEdit(entry);
+            // Redirect to form page with entry ID
+            window.location.href = `form.html?id=${entry._id}`;
         });
         
         // Add delete button event
@@ -192,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addEntryToDOM(entry) {
+        if (!entriesContainer) return;
         const entryElement = createEntryElement(entry);
         entriesContainer.prepend(entryElement);
     }
@@ -216,35 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function handleEdit(entry) {
-        console.log('Editing entry:', entry);
-        editingEntryId = entry._id;
-        
-        // Fill the form
-        document.getElementById('description').value = entry.description;
-        document.getElementById('duration').value = entry.duration;
-        document.getElementById('tags').value = entry.tags ? entry.tags.join(', ') : '';
-        
-        // Set emotion
-        emotionButtons.forEach(btn => {
-            if (btn.getAttribute('data-emoji') === entry.emotion) {
-                btn.click();
-            }
-        });
-        
-        // Set "would do again"
-        const wouldDoAgainRadios = document.getElementsByName('wouldDoAgain');
-        wouldDoAgainRadios.forEach(radio => {
-            if (radio.value === entry.wouldDoAgain) {
-                radio.checked = true;
-            }
-        });
-        
-        submitButton.textContent = 'Update Entry';
-        document.getElementById('submission-form').scrollIntoView({ behavior: 'smooth' });
-    }
-
     async function fetchEntries() {
+        if (!entriesContainer) return;
+        
         try {
             const response = await fetch('/api/entries');
             if (response.ok) {
@@ -343,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else if (sortValue === 'shortest' || sortValue === 'longest') {
                         const aDuration = a.getAttribute('data-duration') || '';
                         const bDuration = b.getAttribute('data-duration') || '';
-                        // Simplified sorting logic, complete comparison can be added after stable operation
+                        // Simplified sorting logic
                         return sortValue === 'shortest' ? 
                             aDuration.localeCompare(bDuration) : 
                             bDuration.localeCompare(aDuration);
@@ -352,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 
                 // Remove all entries and re-add in the sorted order
-                const entriesContainer = document.getElementById('entries-container');
                 entries.forEach(entry => entriesContainer.appendChild(entry));
             });
         }
@@ -377,6 +370,60 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Fetch entries when page loads
-    fetchEntries();
+    // Check URL for edit mode
+    async function checkForEditMode() {
+        if (!lostTimeForm) return;
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const entryId = urlParams.get('id');
+        
+        if (entryId) {
+            try {
+                const response = await fetch(`/api/entries/${entryId}`);
+                if (response.ok) {
+                    const entry = await response.json();
+                    editingEntryId = entry._id;
+                    
+                    // Fill the form
+                    document.getElementById('description').value = entry.description;
+                    document.getElementById('duration').value = entry.duration;
+                    document.getElementById('tags').value = entry.tags ? entry.tags.join(', ') : '';
+                    
+                    // Set emotion
+                    emotionButtons.forEach(btn => {
+                        if (btn.getAttribute('data-emoji') === entry.emotion) {
+                            btn.click();
+                        }
+                    });
+                    
+                    // Set "would do again"
+                    const wouldDoAgainRadios = document.getElementsByName('wouldDoAgain');
+                    wouldDoAgainRadios.forEach(radio => {
+                        if (radio.value === entry.wouldDoAgain) {
+                            radio.checked = true;
+                        }
+                    });
+                    
+                    submitButton.textContent = 'Update Entry';
+                } else {
+                    console.error('Failed to fetch entry for editing');
+                    alert('Could not load the entry for editing. Redirecting to home page.');
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Error fetching entry for editing:', error);
+                alert('An error occurred while loading the entry. Redirecting to home page.');
+                window.location.href = 'index.html';
+            }
+        }
+    }
+
+    // Initialize based on current page
+    if (lostTimeForm) {
+        // We're on the form page
+        checkForEditMode();
+    } else if (entriesContainer) {
+        // We're on the main page
+        fetchEntries();
+    }
 }); 
